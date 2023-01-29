@@ -1,0 +1,6 @@
+package br.com.swalker.notes
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
