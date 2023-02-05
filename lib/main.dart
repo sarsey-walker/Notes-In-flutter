@@ -42,30 +42,48 @@ class HomePage extends StatelessWidget {
             final user = FirebaseAuth.instance.currentUser;
             final emailVerified = user?.emailVerified ?? false;
             if (emailVerified) {
-              print('You are a verified user.');
-            } else {
-              print('You need to verify your email first.');
-            }
-            return const Text('done');
-          }
-          return const Text('fora dos ifs');
-          /*switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              final user = FirebaseAuth.instance.currentUser;
-              final emailVerified = user?.emailVerified ?? false;
-              if (emailVerified) {
-                print('You are a verified user.');
-              } else {
-                print('You need to verify your email first.');
-              }
-              print('${snapshot.connectionState}');
               return const Text('done');
-
-            default:
-              return const Text('Loading..');
-          }*/
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => VerifyEmailView(),
+                ),
+              );
+              return const Text('else');
+            }
+          } else {
+            return const Text('Loading...');
+          }
         },
       ),
+    );
+  }
+}
+
+class VerifyEmailView extends StatefulWidget {
+  const VerifyEmailView({super.key});
+
+  @override
+  State<VerifyEmailView> createState() => _VerifyEmailViewState();
+}
+
+class _VerifyEmailViewState extends State<VerifyEmailView> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Verify email'),
+      ),
+      body: Column(children: [
+        const Text('Please verify your email addres:'),
+        TextButton(
+          onPressed: () async {
+            final user = FirebaseAuth.instance.currentUser;
+            await user?.sendEmailVerification();
+          },
+          child: const Text('Send email verification'),
+        ),
+      ]),
     );
   }
 }
