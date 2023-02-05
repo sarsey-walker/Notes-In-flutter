@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -66,24 +67,35 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final credential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
-                print(credential);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  print('The password provided is too weak.');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('The password provided is too weak.')),
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  print('The account already exists for that email.');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content:
+                            Text('The account already exists for that email.')),
+                  );
                 } else if (e.code == 'invalid-email') {
-                  print('Invalid email!');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid email!')),
+                  );
                 } else {
-                  print('Something else have happened! \n code: ${e.code}');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            'Something else have happened \n code: ${e.code}')),
+                  );
                 }
               } catch (e) {
-                print(e);
+                log(e.toString());
               }
             },
             child: const Text('Register'),

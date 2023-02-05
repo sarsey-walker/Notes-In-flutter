@@ -14,15 +14,15 @@ void main() {
     title: 'Flutter Demo',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      primarySwatch: Colors.deepOrange,
-      textButtonTheme: TextButtonThemeData(
-        style: ButtonStyle(
-          foregroundColor: MaterialStateProperty.all(Colors.white),
-          backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
-          padding: MaterialStateProperty.all(
-              const EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15)),
-        ),
-      ),
+      primarySwatch: Colors.blue,
+      // textButtonTheme: TextButtonThemeData(
+      //   style: ButtonStyle(
+      //     foregroundColor: MaterialStateProperty.all(Colors.white),
+      //     backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+      //     padding: MaterialStateProperty.all(
+      //         const EdgeInsets.only(left: 30, right: 30, top: 15, bottom: 15)),
+      //   ),
+      // ),
     ),
     home: const HomePage(),
     routes: {

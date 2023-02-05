@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,27 +69,26 @@ class _LoginViewState extends State<LoginView> {
                   email: email,
                   password: password,
                 );
-                print(credential);
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/home/', (route) => false);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  print('User not found!');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('User not found!')),
+                  );
                 } else if (e.code == 'wrong-password') {
-                  print('Wrong password!');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Wrong password!')),
+                  );
                 } else {
-                  print('Something else have happened');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Something else have happened')),
+                  );
                 }
               } catch (e) {
-                print(e);
+                log(e.toString());
               }
-
-              // final userCredential =
-              //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              //   email: email,
-              //   password: password,
-              // );
-              // print(userCredential);
             },
             child: const Text('Login'),
           ),
@@ -104,10 +104,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-
-
-/*
-retorno
-UserCredential(additionalUserInfo: AdditionalUserInfo(isNewUser: true, profile: {}, providerId: null, username: null), credential: null, user: User(displayName: null, email: sarsey.james@gmail.com, emailVerified: false, isAnonymous: false, metadata: UserMetadata(creationTime: 2023-01-30 00:20:20.769Z, lastSignInTime: 2023-01-30 00:20:20.769Z), phoneNumber: null, photoURL: null, providerData, [UserInfo(displayName: null, email: sarsey.james@gmail.com, phoneNumber: null, photoURL: null, providerId: password, uid: sarsey.james@gmail.com)], refreshToken: , tenantId: null, uid: NHw7nXMuRsVM2RGe6ijoDLiBAi73))
-
- */
