@@ -27,6 +27,7 @@ void main() {
     routes: {
       '/login/': (context) => const LoginView(),
       '/register/': (context) => const RegisterView(),
+      '/home/': (context) => const NotesView(),
     },
   ));
 }
@@ -45,7 +46,6 @@ class HomePage extends StatelessWidget {
       builder: (context, snapshot) {
         // Check for errors
         if (snapshot.hasError) {
-          print(snapshot.error);
           return const Text('Something Wrong..');
         }
 
@@ -54,16 +54,40 @@ class HomePage extends StatelessWidget {
           final user = FirebaseAuth.instance.currentUser;
           if (user == null) {
             return const LoginView();
-          } else if (user.emailVerified) {
-            return const Text('done');
           } else {
-            print(user);
-            return const VerifyEmailView();
+            if (user.emailVerified) {
+              return const NotesView();
+            } else {
+              return const VerifyEmailView();
+            }
           }
         } else {
           return const CircularProgressIndicator();
         }
       },
+    );
+  }
+}
+
+class NotesView extends StatelessWidget {
+  const NotesView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('My notes'),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login/', (route) => false);
+              },
+              icon: const Icon(Icons.logout))
+        ],
+      ),
+      body: const Text('hello World!'),
     );
   }
 }
