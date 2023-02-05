@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -69,6 +70,8 @@ class HomePage extends StatelessWidget {
   }
 }
 
+enum MenuActions { logOut }
+
 class NotesView extends StatelessWidget {
   const NotesView({super.key});
 
@@ -78,16 +81,57 @@ class NotesView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('My notes'),
         actions: [
-          IconButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/login/', (route) => false);
-              },
-              icon: const Icon(Icons.logout))
+          PopupMenuButton<MenuActions>(
+            onSelected: ((value) async {
+              switch (value) {
+                case MenuActions.logOut:
+                  final shouldlogOut = await showlogOutDialog(context);
+                  if (shouldlogOut) {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login/', (route) => false);
+                  }
+                  break;
+              }
+            }),
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem<MenuActions>(
+                  value: MenuActions.logOut,
+                  child: Text('Log out'),
+                )
+              ];
+            },
+          ),
         ],
       ),
       body: const Text('hello World!'),
     );
   }
+}
+
+Future<bool> showlogOutDialog(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Sign out'),
+        content: const Text('Are you sure you wanna log ou?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('Yes'),
+          )
+        ],
+      );
+    },
+  ).then((value) => value ?? false);
 }
