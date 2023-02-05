@@ -1,10 +1,7 @@
-import 'dart:developer';
-import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
-import '../firebase_options.dart';
+import 'package:notes/services/auth/auth_exceptions.dart';
+import 'package:notes/services/auth/auth_service.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -57,43 +54,33 @@ class _LoginViewState extends State<LoginView> {
           ),
           TextButton(
             onPressed: () async {
-              await Firebase.initializeApp(
-                options: Platform.isLinux
-                    ? DefaultFirebaseOptions.web
-                    : DefaultFirebaseOptions.currentPlatform,
-              );
               final email = _email.text;
               final password = _password.text;
               try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().logIn(
                   email: email,
                   password: password,
                 );
-                final user = await FirebaseAuth.instance.currentUser;
-                if(user?.emailVerified ?? false){
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(notesRoute, (route) => false);
-                } else{
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false);
-                }
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'user-not-found') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('User not found!')),
-                  );
-                } else if (e.code == 'wrong-password') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Wrong password!')),
-                  );
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(notesRoute, (route) => false);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Something else have happened')),
-                  );
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      verifyEmailRoute, (route) => false);
                 }
-              } catch (e) {
-                log(e.toString());
+              } on UserNotFoundAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('User not found!')),
+                );
+              } on WrongPasswordAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Wrong password!')),
+                );
+              } on GenericAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Authentication error')),
+                );
               }
             },
             child: const Text('Login'),

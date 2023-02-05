@@ -1,11 +1,7 @@
-import 'dart:developer';
-import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
-
-import '../firebase_options.dart';
+import 'package:notes/services/auth/auth_exceptions.dart';
+import 'package:notes/services/auth/auth_service.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -60,43 +56,34 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           TextButton(
             onPressed: () async {
-              await Firebase.initializeApp(
-                options: Platform.isLinux
-                    ? DefaultFirebaseOptions.web
-                    : DefaultFirebaseOptions.currentPlatform,
-              );
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await AuthService.firebase().createUser(
                   email: email,
                   password: password,
                 );
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('The password provided is too weak.')),
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content:
-                            Text('The account already exists for that email.')),
-                  );
-                } else if (e.code == 'invalid-email') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid email!')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'Something else have happened \n code: ${e.code}')),
-                  );
-                }
-              } catch (e) {
-                log(e.toString());
+              } on WeakPasswordAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('The password provided is too weak.')),
+                );
+              } on EmailAlreaduInUseAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content:
+                          Text('The account already exists for that email.')),
+                );
+              } on InvalidEmailAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Invalid email!')),
+                );
+              } on GenericAuthException {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Failed to register'),
+                  ),
+                );
               }
             },
             child: const Text('Register'),
