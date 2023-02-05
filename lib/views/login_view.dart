@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/constants/routes.dart';
 import '../firebase_options.dart';
 
 class LoginView extends StatefulWidget {
@@ -70,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
                   password: password,
                 );
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/home/', (route) => false);
+                    .pushNamedAndRemoveUntil(notesRoute, (route) => false);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
           TextButton(
             onPressed: () {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/register/', (route) => false);
+                  .pushNamedAndRemoveUntil(registerRoute, (route) => false);
             },
             child: const Text('Not registered yet?'),
           ),
