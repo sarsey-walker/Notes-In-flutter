@@ -92,6 +92,13 @@ class _LoginViewState extends State<LoginView> {
             },
             child: const Text('Not registered yet?'),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(editNoteRoute, (route) => false);
+            },
+            child: const Text('Edit?'),
+          ),
         ],
       ),
     );
