@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
 import 'package:notes/services/auth/auth_service.dart';
@@ -7,6 +9,7 @@ import 'package:notes/views/notes/new_note_view.dart';
 import 'package:notes/views/notes/notes_view.dart';
 import 'package:notes/views/register_view.dart';
 import 'package:notes/views/verify_email_view.dart';
+import 'package:path/path.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +49,31 @@ class HomePage extends StatelessWidget {
       builder: (context, snapshot) {
         // Check for errors
         if (snapshot.hasError) {
+          // if (Platform.isLinux) {
+          //   return Scaffold(
+          //     appBar: AppBar(
+          //       title: const Text('New note'),
+          //     ),
+          //     body: const TextField(
+          //       controller: null,
+          //       keyboardType: TextInputType.multiline,
+          //       maxLines: null,
+          //       minLines: 4,
+          //       decoration: InputDecoration(
+          //         hintText: 'Start typing here your note...',
+          //         hintStyle: TextStyle(
+          //           color: Colors.white70,
+          //         ),
+          //         filled: true,
+          //         fillColor: Color.fromARGB(232, 0, 0, 0),
+          //         border: InputBorder.none,
+          //       ),
+          //       style: TextStyle(
+          //         color: Color.fromARGB(226, 255, 255, 255),
+          //       ),
+          //     ),
+          //   );
+          // }
           return const Text('Something Wrong..');
         }
 
