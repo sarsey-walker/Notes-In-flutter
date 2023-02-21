@@ -12,10 +12,15 @@ class NotesService {
 
   List<DatabaseNote> _notes = [];
 
-  final _notesStreamController =
-      StreamController<List<DatabaseNote>>.broadcast();
+  late final StreamController<List<DatabaseNote>> _notesStreamController;
   // Creating a singleton
-  NotesService._sharedInstance();
+  NotesService._sharedInstance() {
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: () {
+        _notesStreamController.sink.add(_notes);
+      },
+    );
+  }
   static final NotesService _shared = NotesService._sharedInstance();
   factory NotesService() => _shared;
 
@@ -58,7 +63,7 @@ class NotesService {
     final updatedNote = await getNote(id: note.id);
 
     _notes.removeWhere((note) => note.id == updatedNote.id);
-    _notes.add(note);
+    _notes.add(updatedNote);
     _notesStreamController.add(_notes);
 
     return updatedNote;
