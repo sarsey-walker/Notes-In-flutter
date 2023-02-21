@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
 import 'package:notes/services/auth/auth_exceptions.dart';
 import 'package:notes/services/auth/auth_service.dart';
+import 'package:notes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -70,17 +71,11 @@ class _LoginViewState extends State<LoginView> {
                       verifyEmailRoute, (route) => false);
                 }
               } on UserNotFoundAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('User not found!')),
-                );
+                await showErrorDialog(context, 'User not found!');
               } on WrongPasswordAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Wrong password!')),
-                );
+                await showErrorDialog(context, 'Wrong password!');
               } on GenericAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Authentication error')),
-                );
+                await showErrorDialog(context, 'Authentication error');
               }
             },
             child: const Text('Login'),

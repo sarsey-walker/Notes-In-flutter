@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes/constants/routes.dart';
 import 'package:notes/services/auth/auth_exceptions.dart';
 import 'package:notes/services/auth/auth_service.dart';
+import 'package:notes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -64,26 +65,15 @@ class _RegisterViewState extends State<RegisterView> {
                   password: password,
                 );
               } on WeakPasswordAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('The password provided is too weak.')),
-                );
+                await showErrorDialog(
+                    context, 'The password provided is too weak.');
               } on EmailAlreaduInUseAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content:
-                          Text('The account already exists for that email.')),
-                );
+                await showErrorDialog(
+                    context, 'The account already exists for that email.');
               } on InvalidEmailAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Invalid email!')),
-                );
+                await showErrorDialog(context, 'Invalid email!');
               } on GenericAuthException {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Failed to register'),
-                  ),
-                );
+                await showErrorDialog(context, 'Failed to register');
               }
             },
             child: const Text('Register'),
